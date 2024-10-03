@@ -4,106 +4,128 @@ const Employee = require("../models/Employee");
 const User = require("../models/User");
 const asyncHandler = require("express-async-handler");
 
-// @desc    Get all employees
-// @route   GET /api/employees
-// @access  Private/Admin
-exports.getEmployees = asyncHandler(async (req, res, next) => {
-  const employees = await Employee.find().populate(
-    "user",
-    "firstName lastName email role"
-  );
-
-  res.status(200).json({
-    success: true,
-    count: employees.length,
-    data: employees,
-  });
-});
-
-// @desc    Get single employee
-// @route   GET /api/employees/:id
-// @access  Private/Admin
-exports.getEmployee = asyncHandler(async (req, res, next) => {
-  const employee = await Employee.findById(req.params.id).populate(
-    "user",
-    "firstName lastName email role"
-  );
-
-  if (!employee) {
-    res.status(404);
-    throw new Error("Employee not found");
-  }
-
-  res.status(200).json({
-    success: true,
-    data: employee,
-  });
-});
-
-// @desc    Create new employee
+// @desc    Create a new Employee
 // @route   POST /api/employees
-// @access  Private/Admin
-exports.createEmployee = asyncHandler(async (req, res, next) => {
-  const { userId, position, salary, status } = req.body;
+// @access  Private/HR or Admin
+exports.createEmployee = asyncHandler(async (req, res) => {
+  const { email, password, name, department, phone, address, photo, hr_id } =
+    req.body;
 
   // Check if user exists
-const user = await User.findById(userId);
-if (!user) {
+  const userExists = await User.findOne({ email });
+  if (userExists) {
     res.status(400);
-    throw new Error("User already exists");
-}
+    throw new Error("Employee already exists");
+  }
 
-  // Create employee
-  const employee = await Employee.create({
-    user: userId,
-    position,
-    salary,
-    status,
+  // Create user
+  const user = await User.create({
+    email,
+    password,
+    role: "Employee",
+    name,
+    department,
+    phone,
+    address,
+    photo,
   });
 
-  res.status(201).json({
-    success: true,
-    data: employee,
-  });
+  if (user) {
+    // Create Employee profile
+    const employee = await Employee.create({
+      user: user._id,
+      hr_id,
+      name,
+      department,
+      phone,
+      address,
+      photo,
+    });
+
+    res.status(201).json(employee);
+  } else {
+    res.status(400);
+    throw new Error("Invalid Employee data");
+  }
 });
 
-// @desc    Update employee
+// @desc    Get all Employees
+// @route   GET /api/employees
+// @access  Private/HR or Admin
+exports.getAllEmployees = asyncHandler(async (req, res) => {
+  const employees = await Employee.find()
+    .populate("user", "-password")
+    .populate("hr_id", "name department");
+  res.json(employees);
+});
+
+// @desc    Get single Employee
+// @route   GET /api/employees/:id
+// @access  Private/HR or Admin
+exports.getEmployee = asyncHandler(async (req, res) => {
+  const employee = await Employee.findById(req.params.id)
+    .populate("user", "-password")
+    .populate("hr_id", "name department");
+
+  if (employee) {
+    res.json(employee);
+  } else {
+    res.status(404);
+    throw new Error("Employee not found");
+  }
+});
+
+// @desc    Update Employee
 // @route   PUT /api/employees/:id
-// @access  Private/Admin
-exports.updateEmployee = asyncHandler(async (req, res, next) => {
-  let employee = await Employee.findById(req.params.id);
+// @access  Private/HR or Admin
+exports.updateEmployee = asyncHandler(async (req, res) => {
+  const employee = await Employee.findById(req.params.id).populate("user");
 
-  if (!employee) {
+  if (employee) {
+    // Update User fields
+    const user = employee.user;
+    user.name = req.body.name || user.name;
+    user.email = req.body.email || user.email;
+    user.department = req.body.department || user.department;
+    user.phone = req.body.phone || user.phone;
+    user.address = req.body.address || user.address;
+    user.photo = req.body.photo || user.photo;
+    if (req.body.password) {
+      user.password = req.body.password; // Will be hashed in User model pre-save hook
+    }
+    await user.save();
+
+    // Update Employee fields
+    employee.hr_id = req.body.hr_id || employee.hr_id;
+    employee.department = req.body.department || employee.department;
+    employee.phone = req.body.phone || employee.phone;
+    employee.address = req.body.address || employee.address;
+    employee.photo = req.body.photo || employee.photo;
+    await employee.save();
+
+    res.json(employee);
+  } else {
     res.status(404);
     throw new Error("Employee not found");
   }
-
-  employee = await Employee.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
-
-  res.status(200).json({
-    success: true,
-    data: employee,
-  });
 });
 
-// @desc    Delete employee
+// @desc    Delete Employee
 // @route   DELETE /api/employees/:id
-// @access  Private/Admin
-exports.deleteEmployee = asyncHandler(async (req, res, next) => {
-  const employee = await Employee.findById(req.params.id);
+// @access  Private/HR or Admin
+exports.deleteEmployee = asyncHandler(async (req, res) => {
+  const employee = await Employee.findById(req.params.id).populate("user");
 
-  if (!employee) {
+  if (employee) {
+    // Delete associated User
+    await User.findByIdAndDelete(employee.user._id);
+
+    // Delete Employee profile
+    await employee.remove();
+
+    res.json({ message: "Employee removed" });
+  } else {
     res.status(404);
     throw new Error("Employee not found");
   }
-
-  await employee.deleteOne();
-
-  res.status(200).json({
-    success: true,
-    data: {},
-  });
 });

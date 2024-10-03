@@ -2,27 +2,35 @@
 
 import API from "./api";
 
+// Utility function to handle errors
+const handleError = (error) => {
+  console.error("API call error:", error.response ? error.response.data : error);
+  throw error.response ? error.response.data : error;
+};
+
 // Function to register a new user
 export const register = async (userData) => {
   try {
-    const response = await API.post("/auth/register", userData);
+    const response = await API.post("auth/register", userData);
     return response.data;
   } catch (error) {
-    throw error.response ? error.response.data : error;
+    handleError(error);
   }
 };
 
 // Function to login a user
-export const loginUser = async (email, password) => {
+
+export const loginUser = async (credentials) => {
   try {
-    const response = await API.post("/auth/login", {
-      email,
-      password,
-    });
-    return response.data; // return the response data
+    const response = await API.post("auth/login", credentials);
+    if (response && response.data) {
+      return response.data;
+    } else {
+      throw new Error("Invalid response from server.");
+    }
   } catch (error) {
-    console.error("Error logging in:", error.response.data); // log error for debugging
-    throw error; // rethrow to be caught in component
+  
+    throw error;
   }
 };
 
@@ -37,6 +45,6 @@ export const getProfile = async () => {
     const response = await API.get("/auth/profile");
     return response.data;
   } catch (error) {
-    throw error.response ? error.response.data : error;
+    handleError(error);
   }
 };

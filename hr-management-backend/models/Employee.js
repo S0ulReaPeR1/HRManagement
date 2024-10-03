@@ -1,30 +1,33 @@
 // models/Employee.js
 
 const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
-const employeeSchema = new mongoose.Schema(
+// Employee Schema
+const employeeSchema = new Schema(
   {
     user: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
-    position: {
-      type: String,
-      required: [true, "Please add a position"],
+    hr_id: { type: Schema.Types.ObjectId, ref: "HR", required: true },
+    name: { type: String, required: true },
+    department: { type: String, required: true },
+    phone: { type: String, required: true },
+    photo: { type: String }, // URL of the photo
+    joining_date: { type: Date, default: Date.now },
+    address: {
+      street: String,
+      city: String,
+      state: String,
+      zip_code: String,
     },
-    salary: {
-      type: Number,
-      required: [true, "Please add a salary"],
-    },
-    status: {
-      type: String,
-      enum: ["Active", "On Leave", "Resigned", "Terminated"],
-      default: "Active",
-    },
-    // Add more fields as needed (e.g., skills, documents)
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
-module.exports = mongoose.model("Employee", employeeSchema);
+const Employee = mongoose.model("Employee", employeeSchema);
+module.exports = Employee;

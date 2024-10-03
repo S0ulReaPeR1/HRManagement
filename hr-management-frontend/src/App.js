@@ -10,6 +10,7 @@ import {
 import Login from "./pages/Login";
 import AdminDashboard from "./components/AdminDashboard";
 import UserDashboard from "./components/UserDashboard";
+import HRDashboard from "./components/HRDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Unauthorized from "./components/Unauthorized"; // Create this component
 
@@ -25,16 +26,24 @@ function App() {
         <Route
           path="/admin-dashboard"
           element={
-            <ProtectedRoute allowedRoles={["Admin"]}>
+            <ProtectedRoute allowedRoles={["Admin",["Employee"]]}>
               <AdminDashboard />
             </ProtectedRoute>
           }
         />
         <Route
-          path="/user-dashboard"
+          path="/employee-dashboard"
           element={
-            <ProtectedRoute allowedRoles={["Employee", "Manager"]}>
+            <ProtectedRoute allowedRoles={["Employee"]}>
               <UserDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/hr-dashboard"
+          element={
+            <ProtectedRoute allowedRoles={["HR"]}>
+              <HRDashboard />
             </ProtectedRoute>
           }
         />

@@ -1,12 +1,10 @@
 // src/components/Login.jsx
 
 import React, { useState, useContext } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./style/login.css";
 import { AuthContext } from "../context/AuthContext";
 import { loginUser } from "../services/loginService";
-
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -35,23 +33,23 @@ export default function Login() {
     setLoading(true);
     setError(null);
 
-   try {
-     const data = await loginUser(formData.email, formData.password);
-     console.log("Login data:", data); // Check what is returned
-     login(data.token, data.role); // Ensure you're passing both token and role
-     if (data.role === "Admin") {
-       navigate("/admin-dashboard");
-     } else {
-       navigate("/user-dashboard");
-     }
-   } catch (error) {
-     console.error("Login failed:", error);
-     setError("Login failed. Please try again.");
-   } finally {
-     setLoading(false);
-   }
-
-    
+    try {
+      const data = await loginUser(formData); // Pass the entire formData object
+      console.log("Login data:", data); // Check what is returned
+      login(data.token, data.role); // Pass only the token
+      if (data.role === "Admin") {
+        navigate("/admin-dashboard");
+      } else if (data.role === "Employee") {
+        navigate("/employee-dashboard");
+      } else {
+        navigate("/hr-dashboard");
+      }
+    } catch (error) {
+      console.error("Login failed:", error);
+      setError("Login failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Toggle password visibility
@@ -61,11 +59,11 @@ export default function Login() {
 
   return (
     <div className="container-fluid flex flex-col md:flex-row LoginImage justify-between items-center">
-      <div className="Logo h-1/2 md:h-full w-full md:w-[47.5vw] bg-green-0 text-center flex justify-center items-center">
+      <div className="Logo h-1/2 md:h-full w-full md:w-[30.5vw]  bg-green-0 text-center flex justify-center items-center">
         <img
           src="hrm-high-resolution-logo-white-transparent.ico"
           alt="Logo"
-          className=""
+          className="md:w-[30.5wh]"
         />
       </div>
       <div className="bg-white h-auto md:h-full w-full md:w-[47.5vw] card rounded-l-3xl text-center font-martel">
