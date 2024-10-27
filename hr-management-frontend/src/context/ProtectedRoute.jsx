@@ -2,8 +2,7 @@
 
 import React, { useContext } from "react";
 import { Navigate } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
-
+import { AuthContext } from "./AuthContext";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { auth } = useContext(AuthContext);
@@ -15,6 +14,8 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 
   if (allowedRoles && !allowedRoles.includes(auth.role)) {
     // Logged in but role not authorized
+    console.error("Unauthorized access: role not allowed");
+    console.log(auth.role);
     return <Navigate to="/unauthorized" replace />;
   }
 

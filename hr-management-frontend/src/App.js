@@ -7,12 +7,15 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import Login from "./pages/Login";
-import AdminDashboard from "./components/AdminDashboard";
-import UserDashboard from "./components/UserDashboard";
-import HRDashboard from "./components/HRDashboard";
-import ProtectedRoute from "./components/ProtectedRoute";
-import Unauthorized from "./components/Unauthorized"; // Create this component
+import Login from "./components/Login/Login";
+import AdminDashboard from "./components/Admin/AdminDashboard";
+import EmployeeDashboard from "./components/Employee/EmployeeDashboard";
+import HRDashboard from "./components/HR/HRDashboard";
+import ProtectedRoute from "./context/ProtectedRoute";
+import Unauthorized from "./components/Others/Unauthorized"; // Create this component
+import EmployeeAttendance from "./components/Employee/EmployeeAttendance";
+import EmployeeStatus from "./components/Employee/EmployeeStatus";
+import EmployeeComplain from "./components/Employee/EmployeeComplain";
 
 function App() {
   return (
@@ -26,16 +29,8 @@ function App() {
         <Route
           path="/admin-dashboard"
           element={
-            <ProtectedRoute allowedRoles={["Admin",["Employee"]]}>
+            <ProtectedRoute allowedRoles={["Admin", ["Employee"]]}>
               <AdminDashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/employee-dashboard"
-          element={
-            <ProtectedRoute allowedRoles={["Employee"]}>
-              <UserDashboard />
             </ProtectedRoute>
           }
         />
@@ -44,6 +39,39 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={["HR"]}>
               <HRDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/employee-dashboard"
+          element={
+            <ProtectedRoute allowedRoles={["Employee"]}>
+              <EmployeeDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/employee-attendance"
+          element={
+            <ProtectedRoute allowedRoles={["Employee"]}>
+              <EmployeeAttendance />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/employee-status"
+          element={
+            <ProtectedRoute allowedRoles={["Employee"]}>
+              <EmployeeStatus />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/employee-complain"
+          element={
+            <ProtectedRoute allowedRoles={["Employee"]}>
+              <EmployeeComplain />
             </ProtectedRoute>
           }
         />

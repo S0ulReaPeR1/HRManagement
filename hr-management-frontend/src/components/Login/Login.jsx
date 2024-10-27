@@ -2,9 +2,9 @@
 
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import "./style/login.css";
-import { AuthContext } from "../context/AuthContext";
-import { loginUser } from "../services/loginService";
+import "../style/login.css";
+import { AuthContext } from "../../context/AuthContext";
+import { loginUser } from "../../services/loginService";
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -35,7 +35,6 @@ export default function Login() {
 
     try {
       const data = await loginUser(formData); // Pass the entire formData object
-      console.log("Login data:", data); // Check what is returned
       login(data.token, data.role); // Pass only the token
       if (data.role === "Admin") {
         navigate("/admin-dashboard");
@@ -63,7 +62,7 @@ export default function Login() {
         <img
           src="hrm-high-resolution-logo-white-transparent.ico"
           alt="Logo"
-          className="md:w-[30.5wh]"
+          className="md:w-[30.5wh] ml-auto mr-auto"
         />
       </div>
       <div className="bg-white h-auto md:h-full w-full md:w-[47.5vw] card rounded-l-3xl text-center font-martel">

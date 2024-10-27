@@ -1,15 +1,28 @@
 // src/context/AuthContext.js
-
 import React, { createContext, useState, useEffect } from "react";
-import { jwtDecode } from "jwt-decode"; // Corrected import
+import {jwtDecode} from "jwt-decode"; // Import as default
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [auth, setAuth] = useState({
-    token: null,
-    role: null,
-    isAuthenticated: false,
+  const [auth, setAuth] = useState(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        const currentTime = Date.now() / 1000;
+        if (decoded.exp > currentTime) {
+          return {
+            token,
+            role: decoded.role,
+            isAuthenticated: true,
+          };
+        }
+      } catch (error) {
+        console.error("Failed to decode token on initial load:", error);
+      }
+    }
+    return { token: null, role: null, isAuthenticated: false };
   });
 
   useEffect(() => {
@@ -20,12 +33,13 @@ export const AuthProvider = ({ children }) => {
         const currentTime = Date.now() / 1000;
 
         if (decoded.exp < currentTime) {
-          // Token has expired
+          console.error("Token has expired");
           logout();
-        } else {
+        } else if (!auth.isAuthenticated) {
+          // Only update if not already authenticated
           setAuth({
             token,
-            role: decoded.role, // Ensure 'role' is in JWT payload
+            role: decoded.role,
             isAuthenticated: true,
           });
         }
@@ -40,16 +54,14 @@ export const AuthProvider = ({ children }) => {
   const login = (token) => {
     try {
       const decoded = jwtDecode(token);
-      console.log(decoded)
       localStorage.setItem("token", token);
       setAuth({
         token,
-        role: decoded.role, // Ensure 'role' is in JWT payload
+        role: decoded.role,
         isAuthenticated: true,
       });
     } catch (error) {
       console.error("Failed to decode token during login:", error);
-      // Optionally, handle the error (e.g., notify the user)
     }
   };
 
@@ -60,7 +72,6 @@ export const AuthProvider = ({ children }) => {
       role: null,
       isAuthenticated: false,
     });
-    // Optionally, redirect the user to the login page
   };
 
   return (
