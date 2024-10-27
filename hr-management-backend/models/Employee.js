@@ -6,6 +6,7 @@ const Schema = mongoose.Schema;
 // Employee Schema
 const employeeSchema = new Schema(
   {
+    
     user: {
       type: Schema.Types.ObjectId,
       ref: "User",

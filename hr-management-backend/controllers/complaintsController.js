@@ -8,12 +8,12 @@ const asyncHandler = require("express-async-handler");
 // @route   POST /api/complaints
 // @access  HR/Admin/Employee
 exports.createComplaint = asyncHandler(async (req, res) => {
-  const { hr_id, employee_id, complaint_details, review_notes } = req.body;
-
+  const { hr_id, user_id, complaint_details, review_notes } = req.body; 
   // Validate HR and Employee existence
   const hr = await require("../models/HR").findById(hr_id);
-  const employee = await Employee.findById(employee_id);
-
+  const employee = await require("../models/Employee").findOne({user: user_id});
+  console.log(employee);
+  var employee_id = employee._id;
   if (!hr) {
     res.status(404);
     throw new Error("HR not found");
@@ -93,6 +93,6 @@ exports.deleteComplaint = asyncHandler(async (req, res) => {
     throw new Error("Complaint record not found");
   }
 
-  await complaint.remove();
+  await Complaints.deleteOne({ _id: req.params.id });
   res.status(200).json({ message: "Complaint record removed" });
 });
