@@ -7,12 +7,23 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import Login from "./components/Login/Login";
-import AdminDashboard from "./components/Admin/AdminDashboard";
-import EmployeeDashboard from "./components/Employee/EmployeeDashboard";
-import HRDashboard from "./components/HR/HRDashboard";
 import ProtectedRoute from "./context/ProtectedRoute";
-import Unauthorized from "./components/Others/Unauthorized"; // Create this component
+import Unauthorized from "./components/Others/Unauthorized";
+
+import Login from "./components/Login/Login";
+
+import AdminDashboard from "./components/Admin/AdminDashboard";
+
+import HRDashboard from "./components/HR/HRDashboard";
+import HRAttendance from "./components/HR/HRAttendance";
+import HRComplains from "./components/HR/HRComplains";
+import HRFiring from "./components/HR/HRFiring";
+import HRHiring from "./components/HR/HRHiring";
+import HRPayroll from "./components/HR/HRPayroll";
+import HRPerformance from "./components/HR/HRPerformance";
+
+
+import EmployeeDashboard from "./components/Employee/EmployeeDashboard";
 import EmployeeAttendance from "./components/Employee/EmployeeAttendance";
 import EmployeeStatus from "./components/Employee/EmployeeStatus";
 import EmployeeComplain from "./components/Employee/EmployeeComplain";
@@ -33,6 +44,9 @@ function App() {
               <AdminDashboard />
             </ProtectedRoute>
           }
+
+
+
         />
         <Route
           path="/hr-dashboard"
@@ -42,6 +56,57 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/hr-hiring"
+          element={
+            <ProtectedRoute allowedRoles={["HR"]}>
+              <HRHiring />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/hr-firing"
+          element={
+            <ProtectedRoute allowedRoles={["HR"]}>
+              <HRFiring />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/hr-payroll"
+          element={
+            <ProtectedRoute allowedRoles={["HR"]}>
+              <HRPayroll />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/hr-performance"
+          element={
+            <ProtectedRoute allowedRoles={["HR"]}>
+              <HRPerformance />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/hr-attendance"
+          element={
+            <ProtectedRoute allowedRoles={["HR"]}>
+              <HRAttendance />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/hr-complains"
+          element={
+            <ProtectedRoute allowedRoles={["HR"]}>
+              <HRComplains />
+            </ProtectedRoute>
+          }
+        />
+
+
+
 
         <Route
           path="/employee-dashboard"
