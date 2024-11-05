@@ -15,7 +15,7 @@ const router = express.Router();
 router.route("/").post(protect, createEmployee).get(protect, getAllEmployees);
 router
   .route("/:id")
-  .get(protect, authorizeMultiple(["Employee","Admin"]),getEmployee)
+  .get(protect, authorizeMultiple(["Employee","Admin","HR"]),getEmployee)
   .put(protect, updateEmployee)
   .delete(protect, deleteEmployee);
 

@@ -6,7 +6,6 @@ const Schema = mongoose.Schema;
 // Attendance Schema
 const attendanceSchema = new Schema(
   {
-    hr_id: { type: Schema.Types.ObjectId, ref: "HR", required: true },
     employee_id: {
       type: Schema.Types.ObjectId,
       ref: "Employee",
