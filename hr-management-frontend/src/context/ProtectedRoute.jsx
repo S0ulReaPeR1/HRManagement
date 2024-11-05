@@ -9,7 +9,7 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 
   if (!auth.isAuthenticated) {
     // Not logged in
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/" replace />;
   }
 
   if (allowedRoles && !allowedRoles.includes(auth.role)) {

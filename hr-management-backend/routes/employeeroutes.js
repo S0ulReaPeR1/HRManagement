@@ -8,14 +8,14 @@ const {
   updateEmployee,
   deleteEmployee,
 } = require("../controllers/employeeController");
-const { protect } = require("../middleware/auth");
+const { protect, authorizeMultiple } = require("../middleware/auth");
 
 const router = express.Router();
 
 router.route("/").post(protect, createEmployee).get(protect, getAllEmployees);
 router
   .route("/:id")
-  .get(protect, getEmployee)
+  .get(protect, authorizeMultiple(["Employee","Admin"]),getEmployee)
   .put(protect, updateEmployee)
   .delete(protect, deleteEmployee);
 

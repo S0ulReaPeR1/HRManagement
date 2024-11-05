@@ -1,41 +1,53 @@
 // models/Hiring.js
-
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
 
-// Hiring Schema
-const hiringSchema = new Schema(
+const hiringSchema = new mongoose.Schema(
   {
-    hr_id: { type: Schema.Types.ObjectId, ref: "HR", required: true },
-    open_positions: [
-      {
-        position_title: { type: String, required: true },
-        description: { type: String, required: true },
-        department: { type: String, required: true },
-        status: { type: String, default: "Open" }, // Open, Closed
-      },
-    ],
+    hr_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    job_title: {
+      type: String,
+      required: true,
+    },
+    department: {
+      type: String,
+      required: true,
+    },
+    open_positions: {
+      type: Number,
+      required: true,
+    },
     scheduled_interviews: [
       {
-        employee_id: { type: Schema.Types.ObjectId, ref: "Employee" },
-        candidate_name: { type: String, required: true },
-        interview_date: { type: Date, required: true },
-        interviewer: { type: String, required: true },
-        status: { type: String, default: "Pending" }, // Pending, Completed
+        employee_id: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Employee",
+        },
+        date: Date,
       },
     ],
     checked_documents: [
       {
-        employee_id: { type: Schema.Types.ObjectId, ref: "Employee" },
-        document_type: { type: String, required: true },
-        verified: { type: Boolean, default: false },
-        verification_date: { type: Date },
+        employee_id: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Employee",
+        },
+        documents: Array,
+      },
+    ],
+    applicants: [
+      {
+        name: String,
+        department: String,
+        phone: String,
+        photo: String,
       },
     ],
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
 const Hiring = mongoose.model("Hiring", hiringSchema);

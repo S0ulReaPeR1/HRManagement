@@ -15,7 +15,7 @@ const router = express.Router();
 router.route("/").post(protect,authorize("Admin"),createHR).get(protect, authorizeMultiple(["Employee","Admin"]), getAllHRs);
 router
   .route("/:id")
-  .get(protect,authorize("Admin"), getHR) // Updated to match the controller function name
+  .get(protect, authorizeMultiple(["HR","Admin"]), getHR) // Updated to match the controller function name
   .put(protect, updateHR)
   .delete(protect, deleteHR);
 

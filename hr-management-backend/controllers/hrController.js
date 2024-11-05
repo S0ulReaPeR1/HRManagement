@@ -59,7 +59,8 @@ exports.getAllHRs = asyncHandler(async (req, res) => {
 // @route   GET /api/hr/:id
 // @access  Private/Admin
 exports.getHR = asyncHandler(async (req, res) => {
-  const hr = await HR.findById(req.params.id).populate("user", "-password");
+  const hr = await require("../models/HR").findOne({ user: req.params.id });
+  console.log(hr);
 
   if (hr) {
     res.json(hr);

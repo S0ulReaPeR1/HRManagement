@@ -6,12 +6,14 @@ const asyncHandler = require("express-async-handler");
 // @desc    Create a new Hiring Record
 // @route   POST /api/hiring
 // @access  Private/HR or Admin
+// Example modification in createHiring
 exports.createHiring = asyncHandler(async (req, res) => {
-  const { hr_id, open_positions, scheduled_interviews, checked_documents } =
-    req.body;
+  const { hr_id, job_title, department, open_positions, scheduled_interviews, checked_documents } = req.body;
 
   const hiring = await Hiring.create({
     hr_id,
+    job_title,
+    department,
     open_positions,
     scheduled_interviews,
     checked_documents,
@@ -19,6 +21,12 @@ exports.createHiring = asyncHandler(async (req, res) => {
 
   res.status(201).json(hiring);
 });
+
+
+
+
+
+
 
 // @desc    Get all Hiring Records
 // @route   GET /api/hiring

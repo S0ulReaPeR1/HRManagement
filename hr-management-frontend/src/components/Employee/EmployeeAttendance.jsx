@@ -30,6 +30,7 @@ export default function EmployeeAttendance() {
         onLogout={handleLogout}
         isOpen={isSidebarOpen}
         onClose={toggleSidebar}
+        Role="Employee"
       />
 
       <div className="main-content flex-1 p-4 md:p-12 relative">

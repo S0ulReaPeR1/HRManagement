@@ -27,12 +27,16 @@ import EmployeeDashboard from "./components/Employee/EmployeeDashboard";
 import EmployeeAttendance from "./components/Employee/EmployeeAttendance";
 import EmployeeStatus from "./components/Employee/EmployeeStatus";
 import EmployeeComplain from "./components/Employee/EmployeeComplain";
+import LandingPage from "./components/Login/Landing";
+import JobApplication from "./components/Login/JobApplication";
 
 function App() {
   return (
     <Router>
       <Routes>
         {/* Public Routes */}
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/apply" element={<JobApplication />} />
         <Route path="/login" element={<Login />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
 
@@ -44,9 +48,6 @@ function App() {
               <AdminDashboard />
             </ProtectedRoute>
           }
-
-
-
         />
         <Route
           path="/hr-dashboard"
@@ -104,9 +105,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-
-
-
 
         <Route
           path="/employee-dashboard"

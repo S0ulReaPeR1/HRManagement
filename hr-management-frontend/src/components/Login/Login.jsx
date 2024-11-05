@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import "../style/login.css";
 import { AuthContext } from "../../context/AuthContext";
 import { loginUser } from "../../services/loginService";
+import { Link } from "react-router-dom";
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -59,11 +60,13 @@ export default function Login() {
   return (
     <div className="container-fluid flex flex-col md:flex-row LoginImage justify-between items-center">
       <div className="Logo h-1/2 md:h-full w-full md:w-[30.5vw]  bg-green-0 text-center flex justify-center items-center">
+        <Link to={"/"} className="image">
         <img
           src="hrm-high-resolution-logo-white-transparent.ico"
           alt="Logo"
           className="md:w-[30.5wh] ml-auto mr-auto"
         />
+        </Link>
       </div>
       <div className="bg-white h-auto md:h-full w-full md:w-[47.5vw] card rounded-l-3xl text-center font-martel">
         <h1 className="text-blue-950 text-5xl mt-20">Welcome!</h1>

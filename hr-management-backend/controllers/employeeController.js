@@ -63,9 +63,7 @@ exports.getAllEmployees = asyncHandler(async (req, res) => {
 // @route   GET /api/employees/:id
 // @access  Private/HR or Admin
 exports.getEmployee = asyncHandler(async (req, res) => {
-  const employee = await Employee.findById(req.params.id)
-    .populate("user", "-password")
-    .populate("hr_id", "name department");
+  const employee = await require("../models/Employee").findOne({ user: req.params.id });
 
   if (employee) {
     res.json(employee);
