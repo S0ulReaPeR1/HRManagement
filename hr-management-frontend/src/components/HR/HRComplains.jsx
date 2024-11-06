@@ -27,6 +27,7 @@ export default function HRComplaints() {
       try {
         const response = await API.get("/complaints");
         setComplaints(response.data);
+        console.log(response.data);
       } catch (error) {
         console.error("Error fetching complaints:", error);
       } finally {

@@ -12,7 +12,7 @@ exports.createComplaint = asyncHandler(async (req, res) => {
   // Validate HR and Employee existence
   const hr = await require("../models/HR").findById(hr_id);
   const employee = await require("../models/Employee").findOne({user: user_id});
-  console.log(employee);
+
   var employee_id = employee._id;
   if (!hr) {
     res.status(404);

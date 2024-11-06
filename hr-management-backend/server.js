@@ -8,11 +8,13 @@ const payrollRoutes = require("./routes/payrollRoutes");
 const attendanceRoutes = require("./routes/attendanceRoutes");
 const complaintsRoutes = require("./routes/complaintsRoutes");
 const performanceRoutes = require("./routes/performanceRoutes");
+const leaveRequestRoutes = require("./routes/leaveRequestRoutes");
 const firingRoutes = require("./routes/firingRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const authRoutes = require("./routes/authRoutes");
 const { errorHandler } = require("./middleware/errorMiddleware");
 const cors = require("cors");
+
 dotenv.config();
 connectDB(); // Connect to MongoDB
 
@@ -33,6 +35,7 @@ app.use("/api/employees", employeeRoutes);
 app.use("/api/hiring", hiringRoutes);
 app.use("/api/payroll", payrollRoutes);
 app.use("/api/attendance", attendanceRoutes);
+app.use("/api/leave",leaveRequestRoutes);
 app.use("/api/complaints", complaintsRoutes);
 app.use("/api/performance", performanceRoutes);
 app.use("/api/firing", firingRoutes);

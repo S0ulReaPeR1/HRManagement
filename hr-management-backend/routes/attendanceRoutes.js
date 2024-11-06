@@ -3,21 +3,36 @@ const {
   createAttendance,
   getAllAttendance,
   getAttendanceById,
-  updateAttendance,
+  confirmAttendance,
   deleteAttendance,
-} = require("../controllers/attendanceController"); // Check the path and names
-const { protect } = require("../middleware/auth");
+  applyLeave,
+  getAllLeaveRequests,
+  getAllLeaveRequestsByID
+} = require("../controllers/attendanceController");
+const {
+  protect,
+  authorize,
+  authorizeMultiple
+  
+} = require("../middleware/auth");
+
 
 const router = express.Router();
 
+// Attendance Routes
 router
   .route("/")
-  .post(protect, createAttendance)
-  .get(protect, getAllAttendance);
+  .post(protect,authorize("Employee"), createAttendance) // Employee creates attendance record
+  .get(protect,authorize("HR"), getAllAttendance); // HR/Admin retrieves all attendance records
+
 router
   .route("/:id")
-  .get(protect, getAttendanceById) // Check function name here
-  .put(protect, updateAttendance)
-  .delete(protect, deleteAttendance);
+  .get(protect,authorizeMultiple(["HR","Employee"]), getAttendanceById) // HR/Admin retrieves a specific attendance record
+  .delete(protect,authorize("HR"), deleteAttendance); // HR/Admin deletes an attendance record
+
+// Confirm Attendance Route
+router.route("/:id/confirm").put(protect,authorize("HR"), confirmAttendance); // HR/Admin confirms attendance status
+
+// Leave Request Routes
 
 module.exports = router;

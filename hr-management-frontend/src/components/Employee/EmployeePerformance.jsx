@@ -8,7 +8,7 @@ import DashboardHeader from "../PageComponents/DashboardHeader";
 import ContentSection from "../PageComponents/ContentSection";
 import { menuItems } from "./constants";
 
-export default function EmployeeStatus() {
+export default function EmployeePerformance() {
   const navigate = useNavigate();
   const { logout } = useContext(AuthContext);
 

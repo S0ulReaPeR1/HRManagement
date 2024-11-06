@@ -25,7 +25,7 @@ import HRPerformance from "./components/HR/HRPerformance";
 
 import EmployeeDashboard from "./components/Employee/EmployeeDashboard";
 import EmployeeAttendance from "./components/Employee/EmployeeAttendance";
-import EmployeeStatus from "./components/Employee/EmployeeStatus";
+import EmployeeStatus from "./components/Employee/EmployeePerformance";
 import EmployeeComplain from "./components/Employee/EmployeeComplain";
 import LandingPage from "./components/Login/Landing";
 import JobApplication from "./components/Login/JobApplication";
@@ -123,7 +123,7 @@ function App() {
           }
         />
         <Route
-          path="/employee-status"
+          path="/employee-performance"
           element={
             <ProtectedRoute allowedRoles={["Employee"]}>
               <EmployeeStatus />
