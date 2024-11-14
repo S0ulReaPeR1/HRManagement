@@ -8,6 +8,7 @@ import DashboardHeader from "../PageComponents/DashboardHeader";
 import ContentSection from "../PageComponents/ContentSection";
 import { menuItems } from "./constants";
 import API from "../../services/api";
+import { jwtDecode } from "jwt-decode";
 import "../style/mainContent.css";
 
 export default function HRHiring() {
@@ -18,23 +19,17 @@ export default function HRHiring() {
   const [jobs, setJobs] = useState([]);
   const [selectedJob, setSelectedJob] = useState(null);
   const [applications, setApplications] = useState([]);
+  const [jobForm, setJobForm] = useState({
+    job_title: "",
+    department: "",
+    open_positions: "",
+    salary: "",
+  });
 
   // Fetch job postings on mount
   useEffect(() => {
-    const fetchJobs = async () => {
-      const { data } = await API.get("/hiring");
-      setJobs(data);
-    };
     fetchJobs();
   }, []);
-
-  // Fetch applications for a selected job
-  const fetchApplications = async (jobId) => {
-    const { data } = await API.get(`/applications/${jobId}`);
-    setApplications(data);
-    setSelectedJob(jobId);
-  };
-
   const handleLogout = () => {
     logout();
     navigate("/login");
@@ -44,10 +39,54 @@ export default function HRHiring() {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  const handleJobFormChange = (e) => {
+    const { name, value } = e.target;
+    setJobForm({ ...jobForm, [name]: value });
+  };
+  
+  const fetchJobs = async () => {
+    const { data } = await API.get("/hiring/jobs"); // Updated to /jobs
+    setJobs(data.filter((job) => job.open_positions > 0));
+  };
+
+  const handleJobSubmit = async (e) => {
+    e.preventDefault();
+
+      const user= jwtDecode(localStorage.getItem("token")).id // Replace with the actual way to get the HR ID (e.g., from context)
+
+      // Prepare the payload to send to the backend
+      const jobData = {
+        user_id:user,
+        job_title: jobForm.job_title,
+        department: jobForm.department,
+        open_positions: jobForm.open_positions,
+        salary: jobForm.salary,
+      };
+
+
+    await API.post("/hiring/jobs", jobData); // Updated to /jobs
+    alert("Job posted successfully!");
+    fetchJobs();
+    setJobForm({
+      job_title: "",
+      department: "",
+      open_positions: "",
+      salary: "",
+    });
+  };
+
+  const fetchApplications = async (jobId) => {
+    console.log(jobId)
+    const { data } = await API.get(`/hiring/jobs/${jobId}`); // Updated to /jobs/:id/apply
+    setApplications(data);
+    setSelectedJob(jobId);
+  };
+
   const handleHire = async (appId) => {
-    await API.post(`/applications/hire/${appId}`);
+    await API.post(`/hiring/jobs/${selectedJob}/select/${appId}`); // Updated to /jobs/:jobId/select/:applicantId
     alert("Applicant hired!");
-    fetchApplications(selectedJob); // Refresh the applications after hiring
+    fetchApplications(selectedJob);
+    fetchJobs(); // Refresh jobs to update open positions
   };
 
   return (
@@ -73,6 +112,53 @@ export default function HRHiring() {
         </div>
 
         <ContentSection title="Hiring Overview">
+          {/* Job Posting Form */}
+          <h3 className="text-lg font-semibold mb-2">Post a New Job</h3>
+          <form onSubmit={handleJobSubmit} className="mb-6">
+            <input
+              type="text"
+              name="job_title"
+              value={jobForm.job_title}
+              onChange={handleJobFormChange}
+              placeholder="Job Title"
+              className="border p-2 mb-2 w-full"
+              required
+            />
+            <input
+              type="text"
+              name="department"
+              value={jobForm.department}
+              onChange={handleJobFormChange}
+              placeholder="Department"
+              className="border p-2 mb-2 w-full"
+              required
+            />
+            <input
+              type="number"
+              name="open_positions"
+              value={jobForm.open_positions}
+              onChange={handleJobFormChange}
+              placeholder="Open Positions"
+              className="border p-2 mb-2 w-full"
+              required
+            />
+            <input
+              type="number"
+              name="salary"
+              value={jobForm.salary}
+              onChange={handleJobFormChange}
+              placeholder="Salary"
+              className="border p-2 mb-2 w-full"
+              required
+            />
+            <button
+              type="submit"
+              className="bg-blue-600 text-white px-4 py-2 rounded"
+            >
+              Post Job
+            </button>
+          </form>
+
           {/* Job Postings List */}
           <h3 className="text-lg font-semibold mb-2">Job Postings</h3>
           <ul className="mb-6">
@@ -81,9 +167,12 @@ export default function HRHiring() {
                 key={job._id}
                 className="flex justify-between items-center p-2 border-b"
               >
-                <span>
-                   {job.open_positions} Open Positions
-                </span>
+                <div>
+                  <span>
+                    {job.job_title} - {job.open_positions} Open Positions
+                  </span>
+                  <span> | Salary: Rs {job.salary}</span>
+                </div>
                 <button
                   className="text-blue-600 hover:underline"
                   onClick={() => fetchApplications(job._id)}
@@ -95,31 +184,43 @@ export default function HRHiring() {
           </ul>
 
           {/* Applications Section */}
+          {/* Applications Section */}
           {selectedJob && (
             <div className="applications-section">
               <h4 className="text-lg font-semibold mb-2">
-                Applications for Job ID: {selectedJob}
+                Applications for Job:{" "}
+                {jobs.find((job) => job._id === selectedJob)?.job_title}
               </h4>
-              <ul>
-                {applications.map((app) => (
-                  <li
-                    key={app._id}
-                    className="flex justify-between items-center p-2 border-b"
-                  >
-                    <span>
-                      {app.applicant_id.name} - Status: {app.status}
-                    </span>
-                    <button
-                      className="bg-green-500 text-white px-3 py-1 rounded-md"
-                      onClick={() => handleHire(app._id)}
+
+              {/* Check if there are applications */}
+              {applications.length === 0 ? (
+                <p className="text-gray-500">
+                  No applications found for this job.
+                </p>
+              ) : (
+                <ul>
+                  {applications.map((app) => (
+                    <li
+                      key={app._id}
+                      className="flex justify-between items-center p-2 border-b"
                     >
-                      Hire
-                    </button>
-                  </li>
-                ))}
-              </ul>
+                      <span>
+                        {app.name} - {app.department} - {app.phone}
+                      </span>
+                      <button
+                        className="bg-green-500 text-white px-3 py-1 rounded-md"
+                        onClick={() => handleHire(app._id)}
+                      >
+                        Hire
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           )}
+
+          {/* Close ContentSection and main content */}
         </ContentSection>
       </div>
     </div>

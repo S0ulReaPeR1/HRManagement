@@ -28,7 +28,7 @@ import EmployeeAttendance from "./components/Employee/EmployeeAttendance";
 import EmployeeStatus from "./components/Employee/EmployeePerformance";
 import EmployeeComplain from "./components/Employee/EmployeeComplain";
 import LandingPage from "./components/Login/Landing";
-import JobApplication from "./components/Login/JobApplication";
+import JobPostingPage from "./components/Login/JobPostingPage";
 
 function App() {
   return (
@@ -36,7 +36,7 @@ function App() {
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
-        <Route path="/apply" element={<JobApplication />} />
+        <Route path="/apply" element={<JobPostingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
 

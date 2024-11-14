@@ -1,25 +1,26 @@
 // routes/hiringRoutes.js
-
 const express = require("express");
-const {
-  createHiring,
-  getAllHiring,
-  getHiring,
-  updateHiring,
-  deleteHiring,
- 
-} = require("../controllers/hiringController");
-const { protect } = require("../middleware/auth");
-
 const router = express.Router();
+const {
+  createJob,
+  getAllJobs,
+  getApplicants,
+  selectApplicant,
+  applyForJob
+} = require("../controllers/hiringController");
 
-router.route("/").post(protect, createHiring).get(protect, getAllHiring);
+// Route to post a new job
+router.post("/jobs", createJob);
 
+// Route to get all jobs
+router.get("/jobs", getAllJobs);
 
-router
-  .route("/:id")
-  .get(protect, getHiring)
-  .put(protect, updateHiring)
-  .delete(protect, deleteHiring);
+router.post("/jobs/:id/apply",applyForJob )
+
+// Route to apply for a job
+router.get("/jobs/:id", getApplicants);
+
+// Route to select an applicant and create an employee
+router.post("/jobs/:jobId/select/:applicantId", selectApplicant);
 
 module.exports = router;

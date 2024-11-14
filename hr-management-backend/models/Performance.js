@@ -14,19 +14,10 @@ const performanceSchema = new Schema(
     },
     performance_review: [
       {
-        review_period: { type: String, required: true }, // e.g., Q1 2024
         score: { type: Number, required: true },
-        reviewer: { type: String, required: true },
         review_date: { type: Date, required: true },
       },
-    ],
-    bonuses: [
-      {
-        bonus_type: { type: String, required: true },
-        bonus_amount: { type: Number, required: true },
-        awarded_on: { type: Date, required: true },
-      },
-    ],
+    ]
   },
   {
     timestamps: true,

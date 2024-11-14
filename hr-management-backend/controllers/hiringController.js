@@ -1,94 +1,148 @@
-// controllers/hiringController.js
-
+// controllers/HiringController.js
 const Hiring = require("../models/Hiring");
-const asyncHandler = require("express-async-handler");
+const User = require("../models/User");
+const Employee = require("../models/Employee");
+const HR= require("../models/HR")
+const bcrypt = require("bcryptjs");
 
-// @desc    Create a new Hiring Record
-// @route   POST /api/hiring
-// @access  Private/HR or Admin
-// Example modification in createHiring
-exports.createHiring = asyncHandler(async (req, res) => {
-  const { hr_id, job_title, department, open_positions, scheduled_interviews, checked_documents } = req.body;
+// POST /api/jobs - HR posts a new job
+exports.createJob = async (req, res) => {
+  try {
+    const { user_id, job_title, department, open_positions, salary } = req.body;
+    console.log(user_id)
+      const hr = await HR.findOne({ user: user_id });
+      const hr_id = hr.id;
 
-  const hiring = await Hiring.create({
-    hr_id,
-    job_title,
-    department,
-    open_positions,
-    scheduled_interviews,
-    checked_documents,
-  });
-
-  res.status(201).json(hiring);
-});
-
-
+    const newJob = new Hiring({
+      hr_id,
+      job_title,
+      department,
+      open_positions,
+      salary,
+    });
 
 
 
-
-
-// @desc    Get all Hiring Records
-// @route   GET /api/hiring
-// @access  Private/HR or Admin
-exports.getAllHiring = asyncHandler(async (req, res) => {
-  const hirings = await Hiring.find()
-    .populate("hr_id", "name department")
-    .populate("scheduled_interviews.employee_id", "name department")
-    .populate("checked_documents.employee_id", "name department");
-
-  res.json(hirings);
-});
-
-// @desc    Get single Hiring Record
-// @route   GET /api/hiring/:id
-// @access  Private/HR or Admin
-exports.getHiring = asyncHandler(async (req, res) => {
-  const hiring = await Hiring.findById(req.params.id)
-    .populate("hr_id", "name department")
-    .populate("scheduled_interviews.employee_id", "name department")
-    .populate("checked_documents.employee_id", "name department");
-
-  if (hiring) {
-    res.json(hiring);
-  } else {
-    res.status(404);
-    throw new Error("Hiring record not found");
+    const job = await newJob.save();
+    res.status(201).json(job);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
-});
+};
 
-// @desc    Update Hiring Record
-// @route   PUT /api/hiring/:id
-// @access  Private/HR or Admin
-exports.updateHiring = asyncHandler(async (req, res) => {
-  const hiring = await Hiring.findById(req.params.id);
+// GET /api/jobs - View all job postings
+console.log("getAllJobs endpoint called");
 
-  if (hiring) {
-    hiring.open_positions = req.body.open_positions || hiring.open_positions;
-    hiring.scheduled_interviews =
-      req.body.scheduled_interviews || hiring.scheduled_interviews;
-    hiring.checked_documents =
-      req.body.checked_documents || hiring.checked_documents;
-
-    const updatedHiring = await hiring.save();
-    res.json(updatedHiring);
-  } else {
-    res.status(404);
-    throw new Error("Hiring record not found");
+exports.getAllJobs = async (req, res) => {
+  try {
+    const jobs = await Hiring.find().select(
+      "job_title department open_positions salary"
+    );
+    res.status(200).json(jobs); // This will return [] if no jobs exist
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
-});
+};
 
-// @desc    Delete Hiring Record
-// @route   DELETE /api/hiring/:id
-// @access  Private/HR or Admin
-exports.deleteHiring = asyncHandler(async (req, res) => {
-  const hiring = await Hiring.findById(req.params.id);
-
-  if (hiring) {
-    await hiring.remove();
-    res.json({ message: "Hiring record removed" });
-  } else {
-    res.status(404);
-    throw new Error("Hiring record not found");
+// Get /api/jobs/:id - Apply for a job
+exports.getApplicants = async (req, res) => {
+  try {
+    const jobId = req.params.id;
+   
+    const job = await Hiring.findById(jobId);
+    if (!job) {
+      return res.status(404).json({ message: "Job not found" });
+    }
+    console.log(job)
+    res.status(200).json(job.applicants);
+   
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
-});
+};
+
+// POST /api/jobs/:jobId/select/:applicantId - Select applicant and create employee
+exports.selectApplicant = async (req, res) => {
+  try {
+    const { jobId, applicantId } = req.params;
+
+    // Fetch the job and the selected applicant
+    const job = await Hiring.findById(jobId);
+    if (!job) {
+      return res.status(404).json({ message: "Job not found" });
+    }
+
+    const applicant = job.applicants.id(applicantId);
+    if (!applicant) {
+      return res.status(404).json({ message: "Applicant not found" });
+    }
+
+    // Create user credentials
+    const email = `${applicant.name
+      .toLowerCase()
+      .replace(" ", ".")}@company.com`;
+    const password = "defaultpassword"; // Replace with a secure generated password
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const newUser = new User({
+      email,
+      password: hashedPassword,
+      role: "Employee",
+    });
+    const user = await newUser.save();
+
+    // Create an employee record
+    const newEmployee = new Employee({
+      user: user._id,
+      hr_id: job.hr_id,
+      name: applicant.name,
+      department: applicant.department,
+      phone: applicant.phone,
+      photo: applicant.photo,
+    });
+    await newEmployee.save();
+
+    // Reduce open positions
+    job.open_positions -= 1;
+    job.applicants.pull(applicantId);
+    await job.save();
+
+    res.status(201).json({
+      message: "Applicant selected and employee profile created",
+      user: {
+        email: user.email,
+        password: "defaultpassword", // Communicate this securely
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.applyForJob = async (req, res) => {
+  try {
+    const jobId = req.params.id;
+    const { name, address, phone, photo } = req.body;
+
+    const job = await Hiring.findById(jobId);
+    if (!job) {
+      return res.status(404).json({ message: "Job not found" });
+    }
+
+    // Ensure applicants array exists
+    if (!job.applicants) {
+      job.applicants = [];
+    }
+
+    // Add the applicant to the array
+    job.applicants.push({ name, address, phone, photo });
+    await job.save();
+
+    res.status(201).json({ message: "Application submitted successfully" });
+  } catch (error) {
+    console.error("Error in applyForJob:", error);
+    res.status(500).json({ error: error.message });
+  }
+};

@@ -1,25 +1,17 @@
-// routes/performanceRoutes.js
-
 const express = require("express");
+const router = express.Router();
 const {
   createPerformance,
-  getAllPerformances,
-  getPerformanceById,
-  updatePerformance,
-  deletePerformance,
+  getPerformanceHistory,
+  getPerformanceHistoryUser
 } = require("../controllers/performanceController");
-const { protect } = require("../middleware/auth");
 
-const router = express.Router();
+// Route to create or update a performance record for an employee
+router.post( "/", createPerformance);
 
-router
-  .route("/")
-  .post(protect, createPerformance)
-  .get(protect, getAllPerformances);
-router
-  .route("/:id")
-  .get(protect, getPerformanceById)
-  .put(protect, updatePerformance)
-  .delete(protect, deletePerformance);
+// Route to get the performance history of a specific employee
+router.get("/:id", getPerformanceHistory);
+
+router.get("/history/:id", getPerformanceHistoryUser);
 
 module.exports = router;

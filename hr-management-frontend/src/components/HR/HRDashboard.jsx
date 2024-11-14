@@ -67,7 +67,7 @@ export default function HRDashboard() {
           {employeeData ? (
             <div className="employee-info bg-white shadow-md rounded-lg p-6 mt-4">
               <div className="flex items-center mb-4">
-                <img
+                <image
                   src={employeeData.photo}
                   alt="Employee Photo"
                   className="w-20 h-20 rounded-full border border-gray-300 mr-4"

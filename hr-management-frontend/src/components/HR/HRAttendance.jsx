@@ -51,7 +51,7 @@ export default function HRAttendance() {
 
     fetchLeaveRequests();
     fetchAttendanceRecords();
-  }, []);
+  });
 
   // Handle leave request approval/rejection
   const handleLeaveRequest = async (id, action) => {

@@ -20,28 +20,14 @@ const hiringSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    scheduled_interviews: [
-      {
-        employee_id: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Employee",
-        },
-        date: Date,
-      },
-    ],
-    checked_documents: [
-      {
-        employee_id: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Employee",
-        },
-        documents: Array,
-      },
-    ],
+    salary: {
+      type: Number,
+      required: true,
+    },
     applicants: [
       {
         name: String,
-        department: String,
+        address: String,
         phone: String,
         photo: String,
       },
