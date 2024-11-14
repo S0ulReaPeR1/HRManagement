@@ -1,17 +1,14 @@
 // models/Firing.js
 
 const mongoose = require("mongoose");
+const { type } = require("os");
 const Schema = mongoose.Schema;
 
 // Firing Schema
 const firingSchema = new Schema(
   {
     hr_id: { type: Schema.Types.ObjectId, ref: "HR", required: true },
-    employee_id: {
-      type: Schema.Types.ObjectId,
-      ref: "Employee",
-      required: true,
-    },
+    name:{type:String},
     reason_for_termination: { type: String, required: true },
     termination_date: { type: Date, required: true },
     final_salary_settlement: { type: Number, required: true },

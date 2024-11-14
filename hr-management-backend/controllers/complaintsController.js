@@ -49,16 +49,21 @@ exports.getAllComplaints = asyncHandler(async (req, res) => {
 // @route   GET /api/complaints/:id
 // @access  HR/Admin
 exports.getComplaintById = asyncHandler(async (req, res) => {
-  const complaint = await Complaints.findById(req.params.id)
+  employee= await Employee.find({user:req.params.id})
+  const complaint = await Complaints.findById({employee_id:employee._id})
     .populate("hr_id", "name email")
     .populate("employee_id", "name email");
+  
+    const comapl = await Complaints.find({
+      employee_id: employee._id,
+    }).populate("employee_id", "name email");
 
   if (!complaint) {
     res.status(404);
     throw new Error("Complaint record not found");
   }
-
-  res.status(200).json(complaint);
+  console.log(comapl)
+  res.status(200).json(comapl);
 });
 
 // @desc    Update a Complaint record

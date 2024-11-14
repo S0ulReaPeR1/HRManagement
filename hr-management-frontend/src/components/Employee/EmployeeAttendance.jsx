@@ -168,7 +168,7 @@ export default function EmployeeAttendance() {
                     <li key={record._id}>
                       {new Date(
                         record.monitor_attendance[0].date
-                      ).toLocaleDateString()}{" "}
+                      ).toLocaleDateString("en-GB")}{" "}
                       - Status: {record.monitor_attendance[0].status}
                     </li>
                   ))}
@@ -233,13 +233,17 @@ export default function EmployeeAttendance() {
                                 {request.status}
                               </span>
                             ) : (
-                              <span className="text-red-600 text-lg font-bold">{request.status}</span>
+                              <span className="text-red-600 text-lg font-bold">
+                                {request.status}
+                              </span>
                             )}
                           </div>
                           <div>
                             Date:
                             <b>
-                              {new Date(request.leaveDays).toLocaleDateString()}
+                              {new Date(request.leaveDays).toLocaleDateString(
+                                "en-GB"
+                              )}
                             </b>
                           </div>
                         </div>

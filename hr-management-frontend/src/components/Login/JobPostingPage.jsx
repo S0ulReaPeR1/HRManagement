@@ -73,9 +73,11 @@ const JobPostingsPage = () => {
                 >
                   <h3 className="text-xl font-semibold">{job.job_title}</h3>
                   <p className="text-gray-600">Department: {job.department}</p>
-                  <p className="text-gray-600">Salary: Rs {job.salary}</p>
                   <p className="text-gray-600">
-                    Open Positions: {job.open_positions}
+                    Salary: Rs {job.salary.toLocaleString()}
+                  </p>
+                  <p className="text-gray-600">
+                    Open Positions: {job.open_positions.toLocaleString()}
                   </p>
                   <button
                     onClick={() => setSelectedJob(job._id)}

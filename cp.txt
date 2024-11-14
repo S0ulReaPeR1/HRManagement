@@ -1,0 +1,34 @@
+Hiring: Hringpage+job landing 
+
+Page Components: sidebar + responsive
+
+Performance: HR-> employees fetchall(), choose employee-> score, shows Performance graph,
+             employee-> graph,
+
+Login->JWT role ->based Login, Protected Routes, as well as Protected APIs
+
+Attendance-> employee ->Attendance Request-> wait for approval(HR)
+                        Leave Request->Date,Reason->wait for result(pending)
+            HR  ->Attendance Requests->mark Present
+                ->Leave Request->Accept/Reject neither(pending)
+
+Complains-> employee->Complains Post->see all Complains->delete Complains
+            HR->see all Complains->delete Complains
+
+Payroll->
+
+Firing->
+
+
+
+
+
+
+
+
+
+
+
+Pending:
+Firing,
+

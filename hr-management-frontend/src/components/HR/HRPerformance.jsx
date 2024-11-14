@@ -113,7 +113,6 @@ export default function HRPerformance() {
           <p>Select an employee to view and manage their performance.</p>
 
           <div className="employee-list">
-            <h2 className="text-lg font-semibold">Employees</h2>
             <ul className="mt-2 space-y-4">
               {employees.map((employee) => (
                 <li key={employee._id} className="flex items-center space-x-4">
@@ -127,10 +126,10 @@ export default function HRPerformance() {
                     type="number"
                     min="1"
                     max="100"
-                    placeholder="Score (1-100)"
+                    placeholder="Score"
                     value={performanceScores[employee._id] || ""}
                     onChange={(e) => handleScoreChange(e, employee._id)}
-                    className="border rounded px-2 py-1"
+                    className="border rounded p-1 w-20"
                   />
                   <button
                     onClick={() => submitPerformanceScore(employee._id)}

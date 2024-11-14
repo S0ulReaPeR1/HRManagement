@@ -61,7 +61,7 @@ export default function EmployeeDashboard() {
             ☰
           </button>
         </div>
-        
+
         <ContentSection title="Employee Dashboard">
           {employeeData ? (
             <div className="employee-info bg-white shadow-md rounded-lg p-6 mt-4">
@@ -84,23 +84,22 @@ export default function EmployeeDashboard() {
                 <p>
                   <strong>ID:</strong> {employeeData._id}
                 </p>
-                <p>
-                  <strong>User ID:</strong> {employeeData.user}
-                </p>
+
                 <p>
                   <strong>Phone:</strong> {employeeData.phone}
                 </p>
                 <p>
+                  <strong>Address:</strong> {employeeData.address}
+                </p>
+                <p>
                   <strong>Joining Date:</strong>{" "}
-                  {new Date(employeeData.joining_date).toLocaleDateString()}
+                  {new Date(employeeData.joining_date).toLocaleDateString(
+                    "en-GB"
+                  )}
                 </p>
                 <p>
-                  <strong>Created At:</strong>{" "}
-                  {new Date(employeeData.createdAt).toLocaleDateString()}
-                </p>
-                <p>
-                  <strong>Updated At:</strong>{" "}
-                  {new Date(employeeData.updatedAt).toLocaleDateString()}
+                  <strong>Salary:</strong> Rs.{" "}
+                  {employeeData.salary.toLocaleString("en-IN")}
                 </p>
               </div>
             </div>

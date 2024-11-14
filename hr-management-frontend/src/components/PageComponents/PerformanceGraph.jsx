@@ -68,7 +68,7 @@ function PerformanceGraph({ data }) {
                 text: "Score",
               },
               min: 0,
-              max: 100,
+              max: 120,
             },
           },
           responsive: true,

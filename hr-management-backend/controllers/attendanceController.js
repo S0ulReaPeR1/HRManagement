@@ -57,19 +57,29 @@ exports.getAllAttendance = asyncHandler(async (req, res) => {
 // @route   GET /api/attendance/:id
 // @access  HR/Admin
 exports.getAttendanceById = asyncHandler(async (req, res) => {
-  const employee_id= await Employee.findOne({ user: req.params.id }).id;
-  const attendance = await Attendance.find(employee_id).populate(
-    "employee_id",
-    "name email"
-  );
+  console.log(req.params.id);
 
-  if (!attendance) {
+  // Find the employee using the user ID (assumed to be in req.params.id)
+  const employee = await Employee.findOne({ user: req.params.id });
+
+  if (!employee) {
+    res.status(404);
+    throw new Error("Employee not found");
+  }
+
+  // Find attendance records for the specific employee's ID
+  const attendance = await Attendance.find({
+    employee_id: employee._id,
+  }).populate("employee_id", "name email");
+
+  if (!attendance || attendance.length === 0) {
     res.status(404);
     throw new Error("Attendance record not found");
   }
 
   res.status(200).json(attendance);
 });
+
 
 // @desc    Confirm or update an Attendance record
 // @route   PUT /api/attendance/:id/confirm

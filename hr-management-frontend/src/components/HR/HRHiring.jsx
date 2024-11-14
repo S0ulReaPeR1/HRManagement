@@ -158,7 +158,8 @@ export default function HRHiring() {
               Post Job
             </button>
           </form>
-
+        </ContentSection>
+        <ContentSection>
           {/* Job Postings List */}
           <h3 className="text-lg font-semibold mb-2">Job Postings</h3>
           <ul className="mb-6">
@@ -171,7 +172,10 @@ export default function HRHiring() {
                   <span>
                     {job.job_title} - {job.open_positions} Open Positions
                   </span>
-                  <span> | Salary: Rs {job.salary}</span>
+                  <span>
+                    {" "}
+                    | Salary: Rs {job.salary.toLocaleString("en-IN")}
+                  </span>
                 </div>
                 <button
                   className="text-blue-600 hover:underline"
@@ -183,7 +187,6 @@ export default function HRHiring() {
             ))}
           </ul>
 
-          {/* Applications Section */}
           {/* Applications Section */}
           {selectedJob && (
             <div className="applications-section">
@@ -205,7 +208,7 @@ export default function HRHiring() {
                       className="flex justify-between items-center p-2 border-b"
                     >
                       <span>
-                        {app.name} - {app.department} - {app.phone}
+                        {app.name} - {app.phone} - {app.address}
                       </span>
                       <button
                         className="bg-green-500 text-white px-3 py-1 rounded-md"

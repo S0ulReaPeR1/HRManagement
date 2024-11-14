@@ -24,7 +24,8 @@ export default function EmployeeComplain() {
     // Fetch complaints related to the employee on component mount
     const fetchComplaints = async () => {
       try {
-        const response = await API.get("/complaints"); // Adjust endpoint as needed
+        
+        const response = await API.get(`/complaints/${decoded}`); // Adjust endpoint as needed
         setComplaints(response.data);
         setLoading(false);
       } catch (error) {

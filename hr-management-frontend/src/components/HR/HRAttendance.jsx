@@ -51,7 +51,7 @@ export default function HRAttendance() {
 
     fetchLeaveRequests();
     fetchAttendanceRecords();
-  });
+  }, []); // Added empty dependency array to prevent infinite loops
 
   // Handle leave request approval/rejection
   const handleLeaveRequest = async (id, action) => {
@@ -69,12 +69,13 @@ export default function HRAttendance() {
       console.error("Error updating leave request:", error);
     }
   };
+
   const handleAttendanceRequest = async (id) => {
     try {
       await API.put(`/attendance/${id}/confirm`);
       try {
         const response = await API.get("/attendance");
-        // Ensure leaveRequests is always an array
+        // Ensure attendanceRecords is always an array
         setAttendanceRecords(response.data || []);
       } catch (error) {
         console.error("Error fetching attendance requests:", error);
@@ -118,7 +119,7 @@ export default function HRAttendance() {
         </div>
 
         <div>
-          <ContentSection title="Attendance Overview" > 
+          <ContentSection title="Attendance Overview">
             <h3 className="text-lg font-bold">Pending Attendance Records</h3>
             {console.log(
               "Pending Attendance Records on content:",
@@ -132,11 +133,14 @@ export default function HRAttendance() {
                   <li key={attendance._id} className="border p-4 rounded-md">
                     <div className="flex justify-between items-center">
                       <p>
-                        {attendance.employee_id.name} marked attendance on
+                        {/* Safe check for employee_id */}
+                        {attendance.employee_id?.name ||
+                          "Unknown Employee"}{" "}
+                        marked attendance on
                         <b>
                           {new Date(
                             attendance.monitor_attendance[0].date
-                          ).toLocaleDateString()}
+                          ).toLocaleDateString("en-IN")}
                         </b>
                       </p>
                       <button
@@ -162,7 +166,8 @@ export default function HRAttendance() {
                   <li key={request._id} className="border p-4 rounded-md">
                     <div className="flex justify-between items-center">
                       <div>
-                        {request.employee_id.name}
+                        {/* Safe check for employee_id */}
+                        {request.employee_id?.name || "Unknown Employee"}
                         <div>
                           Reason:
                           <b>{request.reason}</b>
@@ -170,7 +175,9 @@ export default function HRAttendance() {
                         <div>
                           Date:
                           <b>
-                            {new Date(request.leaveDays).toLocaleDateString()}
+                            {new Date(request.leaveDays).toLocaleDateString(
+                              "en-IN"
+                            )}
                           </b>
                         </div>
                       </div>

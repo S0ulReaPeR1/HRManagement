@@ -80,15 +80,14 @@ exports.selectApplicant = async (req, res) => {
     // Create user credentials
     const email = `${applicant.name
       .toLowerCase()
-      .replace(" ", ".")}@company.com`;
-    const password = "defaultpassword"; // Replace with a secure generated password
+      .replace(" ", ".")}@hrm.com`;
+    const password = "password"; // Replace with a secure generated password
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
+   
+   
     const newUser = new User({
       email,
-      password: hashedPassword,
+      password: password,
       role: "Employee",
     });
     const user = await newUser.save();
@@ -98,9 +97,11 @@ exports.selectApplicant = async (req, res) => {
       user: user._id,
       hr_id: job.hr_id,
       name: applicant.name,
-      department: applicant.department,
+      department: job.department,
       phone: applicant.phone,
       photo: applicant.photo,
+      address: applicant.address,
+      salary:job.salary
     });
     await newEmployee.save();
 

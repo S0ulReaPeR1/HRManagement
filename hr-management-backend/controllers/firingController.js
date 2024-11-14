@@ -2,9 +2,15 @@
 
 const Firing = require("../models/Firing");
 const Employee = require("../models/Employee");
+const User = require("../models/User");
 const asyncHandler = require("express-async-handler");
+const HR = require("../models/HR");
+const Attendance = require("../models/Attendance");
+const Payroll = require("../models/Payroll");
+const Performance = require("../models/Performance"); // Add all relevant models here
+const Complains=require("../models/Complaints")
 
-// @desc    Create a new Firing record
+// @desc    Create a new Firing record and delete employee from system
 // @route   POST /api/firing
 // @access  HR/Admin
 exports.createFiring = asyncHandler(async (req, res) => {
@@ -15,40 +21,61 @@ exports.createFiring = asyncHandler(async (req, res) => {
     termination_date,
     final_salary_settlement,
   } = req.body;
-
-  // Validate HR and Employee existence
-  const hr = await require("../models/HR").findById(hr_id);
-  const employee = await Employee.findById(employee_id);
-
+    console.log(req.body)
+  // Validate HR existence
+  const hr = await HR.findOne({user:hr_id});
   if (!hr) {
     res.status(404);
     throw new Error("HR not found");
   }
 
+  // Validate Employee existence
+  const employee = await Employee.findById(employee_id);
   if (!employee) {
     res.status(404);
     throw new Error("Employee not found");
   }
 
+  // Check if the employee has already been terminated
+  const existingFiring = await Firing.findOne({ employee_id });
+  if (existingFiring) {
+    res.status(400);
+    throw new Error("This employee has already been terminated");
+  }
+const employee_name=employee.name
+  // Create firing record
   const firing = new Firing({
     hr_id,
-    employee_id,
+    employee_name,
     reason_for_termination,
     termination_date,
     final_salary_settlement,
   });
-
   const savedFiring = await firing.save();
-  res.status(201).json(savedFiring);
+
+  // Remove employee from Employee and User collections
+  await Employee.findByIdAndDelete(employee_id);
+  await User.findOneAndDelete({ _id: employee.user.id });
+
+  // Delete all related records (Attendance, Payroll, Performance, etc.)
+  await Attendance.deleteMany({employee_id: employee_id });
+  await Payroll.deleteMany({employee_id: employee_id });
+  await Performance.deleteMany({employee_id: employee_id });
+  await Complains.deleteMany({employee_id: employee_id });
+
+  res.status(201).json({
+    message: "Firing record created and employee removed from the system",
+    firing: savedFiring,
+  });
 });
+
 
 // @desc    Get all Firing records
 // @route   GET /api/firing
 // @access  HR/Admin
 exports.getAllFirings = asyncHandler(async (req, res) => {
   const firings = await Firing.find()
-    .populate("hr_id", "name email")
-    .populate("employee_id", "name email");
+    .populate("hr_id", "name email");
   res.status(200).json(firings);
 });
 
