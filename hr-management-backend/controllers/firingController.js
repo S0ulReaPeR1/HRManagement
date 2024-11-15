@@ -8,14 +8,15 @@ const HR = require("../models/HR");
 const Attendance = require("../models/Attendance");
 const Payroll = require("../models/Payroll");
 const Performance = require("../models/Performance"); // Add all relevant models here
-const Complains=require("../models/Complaints")
+const Complaints = require("../models/Complaints")
+const LeaveRequest=require("../models/LeaveRequest")
 
 // @desc    Create a new Firing record and delete employee from system
 // @route   POST /api/firing
 // @access  HR/Admin
 exports.createFiring = asyncHandler(async (req, res) => {
   const {
-    hr_id,
+    user_id,
     employee_id,
     reason_for_termination,
     termination_date,
@@ -23,7 +24,7 @@ exports.createFiring = asyncHandler(async (req, res) => {
   } = req.body;
     console.log(req.body)
   // Validate HR existence
-  const hr = await HR.findOne({user:hr_id});
+  const hr = await HR.findOne({user:user_id});
   if (!hr) {
     res.status(404);
     throw new Error("HR not found");
@@ -42,7 +43,9 @@ exports.createFiring = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("This employee has already been terminated");
   }
-const employee_name=employee.name
+  const employee_name = employee.name
+  console.log(employee_name)
+  const hr_id = hr._id;
   // Create firing record
   const firing = new Firing({
     hr_id,
@@ -55,13 +58,15 @@ const employee_name=employee.name
 
   // Remove employee from Employee and User collections
   await Employee.findByIdAndDelete(employee_id);
+  
   await User.findOneAndDelete({ _id: employee.user.id });
 
   // Delete all related records (Attendance, Payroll, Performance, etc.)
-  await Attendance.deleteMany({employee_id: employee_id });
-  await Payroll.deleteMany({employee_id: employee_id });
-  await Performance.deleteMany({employee_id: employee_id });
-  await Complains.deleteMany({employee_id: employee_id });
+  await Attendance.deleteMany({ employee_id: employee_id });
+  await Performance.deleteMany({ employee_id: employee_id });
+  await Complaints.deleteMany({ employee_id: employee_id });
+  await Payroll.deleteMany({ employee_id: employee_id });
+  await LeaveRequest.deleteMany({ employee_id: employee_id });
 
   res.status(201).json({
     message: "Firing record created and employee removed from the system",

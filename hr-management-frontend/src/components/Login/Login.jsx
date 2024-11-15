@@ -73,7 +73,7 @@ export default function Login() {
         <p className="text-palette-4 text-3xl mt-5">Please login to continue</p>
         <form onSubmit={handleSubmit} className="mt-24 text-start ml-8 mr-8">
           {error && <div className="text-red-500 mb-4">{error}</div>}
-          <label htmlFor="email" className="text-2xl text-palette-3 p-2">
+          <label htmlFor="email" className="text-2xl text-palette-1 p-2">
             Email Address
           </label>
           <div className="mt-1 mb-6">
@@ -87,7 +87,7 @@ export default function Login() {
               className="bg-palette-5 text-palette-1 w-full h-14 text-l p-4 rounded-lg drop-shadow-xl"
             />
           </div>
-          <label htmlFor="password" className="text-2xl text-palette-3 p-2">
+          <label htmlFor="password" className="text-2xl text-palette-1 p-2">
             Password
           </label>
           <div className="mt-1 relative">
@@ -98,12 +98,12 @@ export default function Login() {
               value={formData.password}
               onChange={handleChange}
               required
-              className="bg-palette-5 text-palette-1 w-full h-14 text-l p-4 rounded-lg drop-shadow-xl"
+              className="bg-palette-5 text-palette-1 w-full h-14 text-l p-4 rounded-lg drop-shadow-xl "
             />
             <button
               type="button"
               onClick={togglePasswordVisibility}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 text-palette-4"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 text-palette-4 "
             >
               {showPassword ? "Hide" : "Show"}
             </button>

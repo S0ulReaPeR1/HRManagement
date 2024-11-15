@@ -137,7 +137,7 @@ export default function HRAttendance() {
                         {attendance.employee_id?.name ||
                           "Unknown Employee"}{" "}
                         marked attendance on
-                        <b>
+                        <b className="pl-1">
                           {new Date(
                             attendance.monitor_attendance[0].date
                           ).toLocaleDateString("en-IN")}

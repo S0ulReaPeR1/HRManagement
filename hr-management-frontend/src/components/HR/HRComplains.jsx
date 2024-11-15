@@ -102,7 +102,7 @@ export default function HRComplaints() {
                     <td className="px-4 py-2 border">
                       {complaint.employee_id?.name || "Unknown"}
                     </td>
-                    <td className="px-4 py-2 border">
+                    <td className="px-4 py-2 border text-center">
                       <button
                         onClick={() => handleDeleteComplaint(complaint._id)}
                         className="px-3 py-1 bg-red-500 text-white rounded"

@@ -143,9 +143,9 @@ export default function EmployeeAttendance() {
 
         <button
           onClick={toggleView}
-          className="p-2 mb-4 bg-blue-600 text-white rounded-lg"
+          className="p-2 mb-4 bg-blue-600 text-white rounded-lg ml-2"
         >
-          Toggle View:{" "}
+          {" "}
           {isViewingAttendance ? "Leave Requests" : "Attendance Records"}
         </button>
 

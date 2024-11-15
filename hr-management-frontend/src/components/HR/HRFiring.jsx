@@ -64,7 +64,7 @@ export default function HRFiring() {
     try {
       console.log(selectedEmployee)
       const firingData = {
-        hr_id: user.id,
+        user_id: user.id,
         employee_id: selectedEmployee._id,
         reason_for_termination: reason,
         termination_date: new Date(),

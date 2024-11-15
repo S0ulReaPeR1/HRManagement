@@ -66,9 +66,9 @@ export default function EmployeeDashboard() {
           {employeeData ? (
             <div className="employee-info bg-white shadow-md rounded-lg p-6 mt-4">
               <div className="flex items-center mb-4">
-                <image
+                <img
                   src={employeeData.photo}
-                  alt="Employee Photo"
+                  alt={employeeData.photo}
                   className="w-20 h-20 rounded-full border border-gray-300 mr-4"
                 />
                 <div>
